@@ -81,54 +81,6 @@ test.describe('WCAG 2.2 Level AA — Screen readers', () => {
       })
     }
 
-    test(
-      'should announce table cell text once without conflicting sort commands',
-      { tag: ['@collection-navigation', '@admin-navigation'] },
-      async ({ page, screenReader }) => {
-        // PYLD-3750
-        // PYLD-3596
-        await gotoPostsList({ page, postsURL })
-        const title = 'Example post two'
-        const grid = page.getByRole('grid', { name: 'Posts', exact: true })
-        const rows = grid.locator('tbody tr')
-        const row = rows.filter({
-          has: page.getByRole('link', { name: title, exact: true }),
-        })
-        const titleCell = row.locator('.cell-title')
-
-        await expect(row).toHaveCount(1)
-        const rowIndex = await row.evaluate((element) =>
-          Array.from(element.parentElement!.children).indexOf(element),
-        )
-
-        await page.getByRole('link', { name: 'Create New', exact: true }).focus()
-        for (let index = 0; index < 8; index++) {
-          await page.keyboard.press('Tab')
-          if (await grid.evaluate((element) => element.contains(document.activeElement))) {
-            break
-          }
-        }
-        await expect(rows.first().locator('.cell--linked')).toBeFocused()
-        await page.keyboard.press('Home')
-        for (let index = 0; index < rowIndex; index++) {
-          await page.keyboard.press('ArrowDown')
-        }
-        await expect(row.getByRole('checkbox')).toBeFocused()
-        const capture = await captureScreenReader({
-          action: () => page.keyboard.press('ArrowRight'),
-          screenReader,
-        })
-        const spoken = capture.spokenPhrase
-
-        await expect(titleCell).toBeFocused()
-        expect(capture.itemText).toContain(title)
-        expect(spoken).toMatch(/link/i)
-        expect(spoken.match(/Example post two/gi) || []).toHaveLength(1)
-        expect(spoken).not.toMatch(/ascending.*descending|descending.*ascending/i)
-        expect(spoken).not.toMatch(/sort by|\{\{label\}\}/i)
-      },
-    )
-
     test('should communicate removed version text while browsing the comparison', async ({
       page,
       screenReader,

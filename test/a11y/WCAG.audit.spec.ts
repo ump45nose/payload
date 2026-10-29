@@ -149,6 +149,19 @@ test.describe('WCAG 2.2 Level AA', () => {
   })
 
   test.describe('1.3.1 Info and Relationships (A)', () => {
+    test('should keep sort commands out of version data-cell names', async () => {
+      // PYLD-3596: version-table names; exact NVDA speech remains a manual check.
+      await openTableVersionHistory({ kind: 'collection', page, postsURL, serverURL })
+      const cells = page.locator('main.versions tbody td')
+
+      expect(await cells.count()).toBeGreaterThan(0)
+      for (const cell of await cells.all()) {
+        await expect(cell).not.toHaveAccessibleName(
+          /ascending.*descending|descending.*ascending|sort by|\{\{label\}\}/i,
+        )
+      }
+    })
+
     test('should associate duplicate locale checkboxes with their visible labels', async () => {
       // PYLD-3671: native association and operation; one VoiceOver browse stop needs manual verification.
       await gotoFirstPost({ page, postsURL, serverURL })
@@ -5037,6 +5050,7 @@ test.describe('WCAG 2.2 Level AA', () => {
       async () => {
         await gotoPostsList({ page, postsURL })
         const grid = page.getByRole('grid', { name: 'Posts', exact: true })
+        // PYLD-3750: browser names/navigation complement the recorded manual speech check.
         const title = grid.getByRole('link', { name: 'Example post two', exact: true })
         const row = page.getByRole('row').filter({
           has: page.getByRole('link', { name: 'Example post two', exact: true }),
@@ -5047,6 +5061,8 @@ test.describe('WCAG 2.2 Level AA', () => {
         )
 
         try {
+          await expect(title).toHaveAccessibleName('Example post two')
+          await expect(row.locator('.cell-title')).toHaveAccessibleName('Example post two')
           await expect(checkbox).toHaveCount(1)
           await expect(checkbox).toBeVisible()
           await page.getByRole('link', { name: 'Create New', exact: true }).focus()

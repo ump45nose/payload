@@ -159,7 +159,7 @@
     },
     "screenReaderDiscovery": {
       "before": 54,
-      "after": 18
+      "after": 17
     },
     "followUpBrowserRun": {
       "status": "passed",
@@ -371,12 +371,10 @@
       "report": "Payload: Versions & Publishing - Cells have both ascending and descending in readout",
       "expected": "Read out should not have confusing or misplaced information",
       "reportedScreenReaders": ["NVDA"],
-      "coverage": "screen-reader-regression-retained",
-      "tests": [
-        "screen-reader.spec.ts :: should announce table cell text once without conflicting sort commands"
-      ],
-      "limits": "Actual duplicate/conflicting speech; reported NVDA Chrome platform not proven by Mac pass.",
-      "manualVerification": "Run the retained AT regression on the reported screen reader/browser; a VoiceOver pass is not NVDA evidence."
+      "coverage": "browser-plus-manual",
+      "tests": ["WCAG.audit.spec.ts :: should keep sort commands out of version data-cell names"],
+      "limits": "Browser names/navigation do not prove exact speech. Manual collection-grid VoiceOver check passed. Original NVDA/Chrome speech remains unverified. Original version-table speech was not manually exercised.",
+      "manualVerification": "Browser names/navigation do not prove exact speech. Manual collection-grid VoiceOver check passed. Original NVDA/Chrome speech remains unverified. Original version-table speech was not manually exercised."
     },
     {
       "ticket": "PYLD-3609",
@@ -867,12 +865,12 @@
       "report": "Payload: Content Management - Table content is announced twice",
       "expected": "Table content is announced one time as visually displayed.",
       "reportedScreenReaders": ["NVDA"],
-      "coverage": "screen-reader-regression-retained",
+      "coverage": "browser-plus-manual",
       "tests": [
-        "screen-reader.spec.ts :: should announce table cell text once without conflicting sort commands"
+        "WCAG.audit.spec.ts :: should reset grid entry after record navigation and retain it through column changes"
       ],
-      "limits": "Actual duplicate/conflicting speech; reported NVDA Chrome platform not proven by Mac pass.",
-      "manualVerification": "Run the retained AT regression on the reported screen reader/browser; a VoiceOver pass is not NVDA evidence."
+      "limits": "Browser names/navigation do not prove exact speech. Manual collection-grid VoiceOver check passed. Original NVDA/Chrome speech remains unverified.",
+      "manualVerification": "Browser names/navigation do not prove exact speech. Manual collection-grid VoiceOver check passed. Original NVDA/Chrome speech remains unverified."
     },
     {
       "ticket": "PYLD-3752",
@@ -941,19 +939,19 @@
   ],
   "remainingScreenReaderReview": {
     "date": "2026-10-21",
-    "scope": "Eighteen current Mac-eligible Guidepup cases remain. Save speech retired with existing browser coverage and positive manual WebKit/VoiceOver evidence; all original 50 ticket mappings remain unchanged.",
+    "scope": "Seventeen current Mac-eligible Guidepup cases remain. Table and save speech have browser regressions plus scoped positive manual WebKit/VoiceOver evidence. All original 50 tickets retain links; original-platform limits remain explicit.",
     "interpretation": "Retain means the observable outcome justifies AT evidence, not that the test has passed or proves conformance. Strengthen means current assertions have a concrete false-pass, false-failure, scope, or cursor-start risk.",
     "counts": {
-      "retain-at": 10,
+      "retain-at": 9,
       "scenario-gap": 0,
       "strengthen-at": 8
     },
     "platformInventory": {
-      "total": 18,
+      "total": 17,
       "nvdaOnly": 0,
       "voiceOverOnly": 1,
-      "both": 17,
-      "note": "All 18 cases are Mac-eligible; widget controls are VoiceOver-only. No full current-suite AT baseline claimed."
+      "both": 16,
+      "note": "All 17 cases are Mac-eligible; widget controls are VoiceOver-only. No current full-suite pass total claimed."
     },
     "sharedRisks": [
       {
@@ -997,16 +995,6 @@
         "decision": "retain-at",
         "finding": "The report concerns dynamic direction/position speech, which DOM live-region text cannot prove. The original VoiceOver key sequence is represented; Windows evidence is additional coverage.",
         "next": "Run the two focused AT cases after setup is stable; browser drag regressions already cover the resulting order."
-      },
-      {
-        "test": "should announce table cell text once without conflicting sort commands",
-        "title": "should announce table cell text once without conflicting sort commands",
-        "scenario": null,
-        "screenReaders": "VoiceOver and NVDA",
-        "tickets": ["PYLD-3750", "PYLD-3596"],
-        "decision": "retain-at",
-        "finding": "Duplicate cell readout and conflicting sort speech are actual AT outcomes. The expected title is checked once in spoken output, but only one fixture cell is sampled.",
-        "next": "Keep focused speech coverage; verify on NVDA/Chrome as reported, rather than inferring it from VoiceOver or NVDA/Firefox."
       },
       {
         "test": "should communicate removed version text while browsing the comparison",
@@ -1461,6 +1449,22 @@
           "WCAG.audit.spec.ts :: should expose a successful document save as a status without moving focus"
         ],
         "manualLimit": "User manually verified in WebKit/VoiceOver: field re-description then Draft saved successfully; focus stays in Subtitle. Other native/platform outcomes unverified."
+      },
+      {
+        "test": "should announce table cell text once without conflicting sort commands",
+        "title": "should announce table cell text once without conflicting sort commands",
+        "scenario": null,
+        "screenReaders": "VoiceOver and NVDA",
+        "tickets": ["PYLD-3750", "PYLD-3596"],
+        "decision": "browser-plus-manual",
+        "finding": "Duplicate cell readout and conflicting sort speech are actual AT outcomes. The expected title is checked once in spoken output, but only one fixture cell is sampled.",
+        "next": "Retain names/navigation browser regressions and explicit original-platform manual limits; no more native capture experiments for this case.",
+        "retiredDate": "2026-10-29",
+        "replacementTests": [
+          "WCAG.audit.spec.ts :: should reset grid entry after record navigation and retain it through column changes",
+          "WCAG.audit.spec.ts :: should keep sort commands out of version data-cell names"
+        ],
+        "manualLimit": "Positive manual WebKit/VoiceOver keyboard-grid result: title reachable/activatable, announced once, no conflicting sort speech. Original NVDA reports and version-table speech remain unverified."
       }
     ],
     "retirementShortlist": {
@@ -1536,10 +1540,10 @@
     "strictReview": {
       "date": "2026-10-28",
       "counts": {
-        "retain-at": 18,
-        "retired-browser-plus-manual": 4
+        "retain-at": 17,
+        "retired-browser-plus-manual": 5
       },
-      "status": "Four cases retired with browser coverage and explicit manual boundaries. Save has a positive manual result. Checkbox single-stop results remain unverified. All 50 original tickets retain test links.",
+      "status": "Five retirements retain browser references and explicit manual boundaries. Table/save have positive scoped WebKit/VoiceOver results; checkbox single-stop and original NVDA results remain unverified.",
       "next": "Remote validation of scenario-local starts for table-cell speech, widget controls and save announcement. Do not force cursor alignment in automatic drawer-entry tests. Version-comparison navigation remains unresolved.",
       "cases": [
         {
@@ -1564,7 +1568,7 @@
         },
         {
           "test": "should announce table cell text once without conflicting sort commands",
-          "decision": "retain-at",
+          "decision": "retired-browser-plus-manual",
           "reason": "Duplicate cell readout and conflicting sort speech are actual AT outcomes. The expected title is checked once in spoken output, but only one fixture cell is sampled."
         },
         {
@@ -1945,6 +1949,21 @@
       "next": "Remote verification of the revised table-cell speech test only; retain the positive widget result and manual save evidence.",
       "browserSetupFinding": "A single Tab from Create New can reach another toolbar control. The browser regression caught this; entry now uses bounded Tabs with verified focus before cell navigation.",
       "verification": "Keyboard grid path passed its targeted Chromium regression (19.3-second run). Existing browser save/status/focus regression passed in the preceding two-case run; grid entry was corrected after that run exposed the single-Tab assumption. Targeted lint passed; 18 Guidepup cases discovered. Revised native table speech not executed locally."
+    },
+    "post595247e6": {
+      "date": "2026-10-29",
+      "commit": "595247e6a1da46d3dfd64ed192b7cf3d8acae965",
+      "source": "User-relayed remote report, one test failed in 43.6 seconds.",
+      "observation": "Keyboard ArrowRight moved DOM focus to title cell, but capture contained preceding checkbox speech. itemText substring also matched checkbox name, so that assertion was not independent title-arrival evidence.",
+      "decision": "Stop native capture experiments. Retire automated case; retain positive manual keyboard-grid result, add explicit collection cell/link names and original version-table name regression. Do not claim VoiceOver or NVDA linear browse conformance.",
+      "criteriaAssessed": [
+        "1.3.1 Info and Relationships (A)",
+        "2.1.1 Keyboard (A)",
+        "2.4.3 Focus Order (A)",
+        "4.1.2 Name, Role, Value (A)"
+      ],
+      "next": "No table/save/widget reruns. Resolve remaining six historical failures as a coordinated group; current 17-case baseline still pending.",
+      "verification": "Two directly affected Chromium browser regressions passed in 11.7 seconds on Node 24.22.1. Targeted lint and commit checks passed; 17 native cases discovered. All 50 ticket references resolve to existing ticket-tagged tests. Native platform/speech limits remain explicit."
     }
   },
   "stackMigration": {
