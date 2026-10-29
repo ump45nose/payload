@@ -13,7 +13,6 @@ import {
   addCollectionQueryWidget,
   captureScreenReader,
   captureScreenReaderOutput,
-  expectPersistedWorkflowPost,
   gotoFirstPost,
   gotoPostsList,
   navigateScreenReaderTo,
@@ -27,7 +26,6 @@ import {
   openVersionComparison,
   openWidgetDrawer,
   waitForKeyboardDragActivation,
-  withWorkflowPost,
 } from './helpers.js'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -91,29 +89,40 @@ test.describe('WCAG 2.2 Level AA — Screen readers', () => {
         // PYLD-3596
         await gotoPostsList({ page, postsURL })
         const title = 'Example post two'
-        const link = page
-          .getByRole('grid', { name: 'Posts', exact: true })
-          .getByRole('link', { name: title, exact: true })
-
-        await expect(link).toBeVisible()
-        const row = page.getByRole('row').filter({
+        const grid = page.getByRole('grid', { name: 'Posts', exact: true })
+        const rows = grid.locator('tbody tr')
+        const row = rows.filter({
           has: page.getByRole('link', { name: title, exact: true }),
         })
-        const output = await navigateScreenReaderTo({
-          matches: /^(?!.*select).*Example post two/i,
-          maxSteps: 6,
-          screenReader,
-          shouldMoveCursorToKeyboardFocus: true,
-          shouldResetCursor: false,
-          // Browse into the title from the preceding row checkbox, preserving cell-arrival speech.
-          startAt: row.getByRole('checkbox'),
-        })
-        const spoken = await screenReader.lastSpokenPhrase()
+        const titleCell = row.locator('.cell-title')
 
-        expect(await screenReader.itemText()).toMatch(
-          /Example post two.*link|link.*Example post two/i,
+        await expect(row).toHaveCount(1)
+        const rowIndex = await row.evaluate((element) =>
+          Array.from(element.parentElement!.children).indexOf(element),
         )
-        expect(output).toContain(title)
+
+        await page.getByRole('link', { name: 'Create New', exact: true }).focus()
+        for (let index = 0; index < 8; index++) {
+          await page.keyboard.press('Tab')
+          if (await grid.evaluate((element) => element.contains(document.activeElement))) {
+            break
+          }
+        }
+        await expect(rows.first().locator('.cell--linked')).toBeFocused()
+        await page.keyboard.press('Home')
+        for (let index = 0; index < rowIndex; index++) {
+          await page.keyboard.press('ArrowDown')
+        }
+        await expect(row.getByRole('checkbox')).toBeFocused()
+        const capture = await captureScreenReader({
+          action: () => page.keyboard.press('ArrowRight'),
+          screenReader,
+        })
+        const spoken = capture.spokenPhrase
+
+        await expect(titleCell).toBeFocused()
+        expect(capture.itemText).toContain(title)
+        expect(spoken).toMatch(/link/i)
         expect(spoken.match(/Example post two/gi) || []).toHaveLength(1)
         expect(spoken).not.toMatch(/ascending.*descending|descending.*ascending/i)
         expect(spoken).not.toMatch(/sort by|\{\{label\}\}/i)
@@ -487,85 +496,6 @@ test.describe('WCAG 2.2 Level AA — Screen readers', () => {
     )
   })
   test.describe('4.1.3 Status Messages (AA)', () => {
-    test(
-      'should announce a successful document save without moving the screen-reader cursor',
-      { tag: ['@a11y-workflow', '@document-editing'] },
-      async ({ page, screenReader }) => {
-        await withWorkflowPost({
-          action: async ({ id, title }) => {
-            const subtitle = page.getByLabel('Subtitle', { exact: true })
-            const updatedValue = `${title} spoken save`
-
-            await subtitle.fill(updatedValue)
-            await navigateScreenReaderTo({
-              matches: /Subtitle/i,
-              maxSteps: 4,
-              screenReader,
-              shouldMoveCursorToKeyboardFocus: true,
-              shouldResetCursor: false,
-              startAt: subtitle,
-            })
-            const cursorBefore = (await screenReader.itemText()).replace(/\s+/g, ' ').trim()
-
-            expect(cursorBefore).toMatch(/Subtitle/i)
-            const capture = await captureScreenReader({
-              action: async () => {
-                const saveShortcut = await page.evaluate(() =>
-                  navigator.userAgent.includes('Mac OS X') ? 'Meta+s' : 'Control+s',
-                )
-
-                await page.keyboard.press(saveShortcut)
-                await expect(
-                  page.locator('[data-sonner-toast]').filter({ hasText: /successfully/i }),
-                ).toBeVisible()
-                await expectPersistedWorkflowPost({
-                  id,
-                  draft: true,
-                  page,
-                  serverURL,
-                  subtitle: updatedValue,
-                  title,
-                })
-              },
-              screenReader,
-            })
-
-            const saveAnnouncement =
-              /(?:updated|saved).*successfully|successfully.*(?:updated|saved)/i
-            let spoken = capture.spokenPhrase
-
-            await expect
-              .poll(
-                async () => {
-                  if (!saveAnnouncement.test(spoken)) {
-                    // Guidepup's phrase getters read cached logs; a passive capture refreshes native output.
-                    const trailing = await captureScreenReader({
-                      action: () => Promise.resolve(),
-                      screenReader,
-                    })
-
-                    spoken += `\n${trailing.spokenPhrase}`
-                  }
-                  return spoken
-                },
-                {
-                  message: 'Save confirmation should follow the field announcement',
-                  timeout: 15000,
-                },
-              )
-              .toMatch(saveAnnouncement)
-            expect((await screenReader.itemText()).replace(/\s+/g, ' ').trim()).toBe(cursorBefore)
-            await expect(subtitle).toBeFocused()
-            await page.reload()
-            await expect(subtitle).toHaveValue(updatedValue)
-          },
-          page,
-          postsURL,
-          serverURL,
-        })
-      },
-    )
-
     test(
       'should announce the unsaved Copy to locale toast without its close button',
       { tag: ['@document-editing'] },

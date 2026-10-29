@@ -159,7 +159,7 @@
     },
     "screenReaderDiscovery": {
       "before": 54,
-      "after": 19
+      "after": 18
     },
     "followUpBrowserRun": {
       "status": "passed",
@@ -941,19 +941,19 @@
   ],
   "remainingScreenReaderReview": {
     "date": "2026-10-21",
-    "scope": "Nineteen current Mac-eligible Guidepup cases remain after three browser replacements. Historical retirement decisions are preserved. Retained AT tests are not assumed passing or proof of the full original report.",
+    "scope": "Eighteen current Mac-eligible Guidepup cases remain. Save speech retired with existing browser coverage and positive manual WebKit/VoiceOver evidence; all original 50 ticket mappings remain unchanged.",
     "interpretation": "Retain means the observable outcome justifies AT evidence, not that the test has passed or proves conformance. Strengthen means current assertions have a concrete false-pass, false-failure, scope, or cursor-start risk.",
     "counts": {
-      "retain-at": 11,
+      "retain-at": 10,
       "scenario-gap": 0,
       "strengthen-at": 8
     },
     "platformInventory": {
-      "total": 19,
+      "total": 18,
       "nvdaOnly": 0,
       "voiceOverOnly": 1,
-      "both": 18,
-      "note": "All 19 current cases are Mac-eligible; widget-control navigation is VoiceOver-only. No current full-suite AT baseline is claimed."
+      "both": 17,
+      "note": "All 18 cases are Mac-eligible; widget controls are VoiceOver-only. No full current-suite AT baseline claimed."
     },
     "sharedRisks": [
       {
@@ -1157,16 +1157,6 @@
         "decision": "retain-at",
         "finding": "The real folder-search submission and resulting count are captured while focus and URL remain stable; this addresses an unsolicited result announcement.",
         "next": "Keep; inspect actual speech and live-region update before interpreting a capture failure as a product bug."
-      },
-      {
-        "test": "should announce a successful document save without moving the screen-reader cursor",
-        "title": "should announce a successful document save without moving the screen-reader cursor",
-        "scenario": null,
-        "screenReaders": "VoiceOver and NVDA",
-        "tickets": [],
-        "decision": "retain-at",
-        "finding": "Inherited from the parent accessibility workflow stack; checks spontaneous save speech, persisted data and stable screen-reader/DOM focus. Not part of the original 50-ticket retirement audit.",
-        "next": "Verify with Guidepup on the supported laptop; no AT pass is claimed by the stack migration."
       }
     ],
     "retiredCases": [
@@ -1456,6 +1446,21 @@
           "WCAG.audit.spec.ts :: should exclude hidden Lexical controls from the accessibility tree"
         ],
         "manualLimit": "Native VoiceOver/NVDA browse exclusion remains a manual check; browser evidence verifies real controls are excluded when hidden in both editor contexts."
+      },
+      {
+        "test": "should announce a successful document save without moving the screen-reader cursor",
+        "title": "should announce a successful document save without moving the screen-reader cursor",
+        "scenario": null,
+        "screenReaders": "VoiceOver and NVDA",
+        "tickets": [],
+        "decision": "browser-plus-manual",
+        "finding": "Inherited from the parent accessibility workflow stack; checks spontaneous save speech, persisted data and stable screen-reader/DOM focus. Not part of the original 50-ticket retirement audit.",
+        "next": "Keep existing browser regression and recorded manual result; no further capture-window experiments.",
+        "retiredDate": "2026-10-29",
+        "replacementTests": [
+          "WCAG.audit.spec.ts :: should expose a successful document save as a status without moving focus"
+        ],
+        "manualLimit": "User manually verified in WebKit/VoiceOver: field re-description then Draft saved successfully; focus stays in Subtitle. Other native/platform outcomes unverified."
       }
     ],
     "retirementShortlist": {
@@ -1531,10 +1536,10 @@
     "strictReview": {
       "date": "2026-10-28",
       "counts": {
-        "retain-at": 19,
-        "retired-browser-plus-manual": 3
+        "retain-at": 18,
+        "retired-browser-plus-manual": 4
       },
-      "status": "Three replacements implemented with passing browser evidence. Nineteen Guidepup cases remain. Single-stop checkbox outcomes remain manual/unverified; all 50 tickets retain test links.",
+      "status": "Four cases retired with browser coverage and explicit manual boundaries. Save has a positive manual result. Checkbox single-stop results remain unverified. All 50 original tickets retain test links.",
       "next": "Remote validation of scenario-local starts for table-cell speech, widget controls and save announcement. Do not force cursor alignment in automatic drawer-entry tests. Version-comparison navigation remains unresolved.",
       "cases": [
         {
@@ -1644,7 +1649,7 @@
         },
         {
           "test": "should announce a successful document save without moving the screen-reader cursor",
-          "decision": "retain-at",
+          "decision": "retired-browser-plus-manual",
           "reason": "Inherited from the parent accessibility workflow stack; checks spontaneous save speech, persisted data and stable screen-reader/DOM focus. Not part of the original 50-ticket retirement audit."
         }
       ]
@@ -1924,6 +1929,22 @@
         "2.4.3 Focus Order (A): DOM and screen-reader cursor remain on Subtitle"
       ],
       "next": "Remote single run of corrected table-cell and save tests. Do not rerun the verified widget case."
+    },
+    "manualGridFollowUp": {
+      "date": "2026-10-29",
+      "source": "User-relayed manual WebKit/VoiceOver observation.",
+      "result": "Tab into the grid then Arrow keys reached and activated the title. User heard Example post 2, link once, without ascending/descending sort instructions.",
+      "limits": "Positive manual keyboard-grid result is not proof of linear virtual-cursor traversal or original NVDA-platform behavior. Automated speech on the revised keyboard path remains pending.",
+      "change": "From Create New, Tab up to eight times until focus enters the grid; require initial linked cell focus. Use Home to reach the checkbox column, then ArrowDown to the target row and capture ArrowRight into the title cell. Require cell focus, title item text, link speech, one title occurrence and no conflicting sort instructions. Do not force cursor alignment or use linear next traversal.",
+      "criteriaAssessed": [
+        "1.3.1 Info and Relationships (A)",
+        "2.1.1 Keyboard (A)",
+        "2.4.3 Focus Order (A)",
+        "4.1.2 Name, Role, Value (A)"
+      ],
+      "next": "Remote verification of the revised table-cell speech test only; retain the positive widget result and manual save evidence.",
+      "browserSetupFinding": "A single Tab from Create New can reach another toolbar control. The browser regression caught this; entry now uses bounded Tabs with verified focus before cell navigation.",
+      "verification": "Keyboard grid path passed its targeted Chromium regression (19.3-second run). Existing browser save/status/focus regression passed in the preceding two-case run; grid entry was corrected after that run exposed the single-Tab assumption. Targeted lint passed; 18 Guidepup cases discovered. Revised native table speech not executed locally."
     }
   },
   "stackMigration": {

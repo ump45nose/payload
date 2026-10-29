@@ -5049,8 +5049,25 @@ test.describe('WCAG 2.2 Level AA', () => {
         try {
           await expect(checkbox).toHaveCount(1)
           await expect(checkbox).toBeVisible()
-          await checkbox.focus()
+          await page.getByRole('link', { name: 'Create New', exact: true }).focus()
+          for (let index = 0; index < 8; index++) {
+            await page.keyboard.press('Tab')
+            if (await grid.evaluate((element) => element.contains(document.activeElement))) {
+              break
+            }
+          }
+          await expect(grid.locator('tbody .cell--linked').first()).toBeFocused()
+          await page.keyboard.press('Home')
+          const rowIndex = await row.evaluate((element) =>
+            Array.from(element.parentElement!.children).indexOf(element),
+          )
+
+          for (let index = 0; index < rowIndex; index++) {
+            await page.keyboard.press('ArrowDown')
+          }
           await expect(checkbox).toBeFocused()
+          await page.keyboard.press('ArrowRight')
+          await expect(row.locator('.cell-title')).toBeFocused()
           await title.focus()
           await page.keyboard.press('Enter')
           await expect(page).toHaveURL(/\/posts\/[^/?]+$/)
