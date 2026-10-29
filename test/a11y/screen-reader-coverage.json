@@ -2050,5 +2050,14 @@
       "lockfile": "Frozen lockfile validation passed; Guidepup upgrade and both Sonner consumers retain the patch.",
       "preCommitLimitation": "The merge pre-commit hook failed on inherited test/access-control/int.spec.ts:58 (typescript/require-await). That file is identical to parent PR #19005. Targeted lint on the three affected a11y source files passed with warnings. The hook was skipped for the merge commit; unrelated access-control code was not changed."
     }
+  },
+  "mainMerge": {
+    "date": "2026-10-29",
+    "mainCommit": "ae600cf5a6a8aa29a7f88ec6141cb755bf6c0bac",
+    "strategy": "Merge main without rewriting shared history. Preserve browser replacements, manual evidence and 17 retained native tests; include main draft-restoration audit test, new dependency policies and corrected CI command.",
+    "validation": "Frozen lockfile-only check passed. Native discovery: 17; browser audit discovery: 394. All 50 tickets resolve to existing tagged tests. No full suite or native execution.",
+    "lintAdjustment": "New draft-restoration test inherited an empty fixture destructure rejected by lint; use the existing browser fixture placeholder instead, without changing the test behavior.",
+    "limits": "Earlier runtime and manual results predate this merge, which includes UI and Lexical updates. They remain historical evidence, not a current full-suite baseline.",
+    "preCommitLimitation": "Pre-commit failed on @vitest/no-identical-title errors in test/versions/int.spec.ts. Staged blob and incoming main blob both equal 988b833056f8779e7f8b1d2a7fb6dc797b171fe7. No unrelated test edits; hook skipped for this merge only. Targeted a11y lint passed."
   }
 }
