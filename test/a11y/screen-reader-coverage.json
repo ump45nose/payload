@@ -1964,6 +1964,66 @@
       ],
       "next": "No table/save/widget reruns. Resolve remaining six historical failures as a coordinated group; current 17-case baseline still pending.",
       "verification": "Two directly affected Chromium browser regressions passed in 11.7 seconds on Node 24.22.1. Targeted lint and commit checks passed; 17 native cases discovered. All 50 ticket references resolve to existing ticket-tagged tests. Native platform/speech limits remain explicit."
+    },
+    "coordinatedSixReview": {
+      "date": "2026-10-29",
+      "scope": "Six historical failures reviewed together; no native test or product behavior changed.",
+      "cases": [
+        {
+          "ticket": "PYLD-3722",
+          "case": "Removed version text",
+          "finding": "Native test performs root searches and a 30-stop scan; deletion meaning can be matched separately from removed text. HTMLDiff emits span[data-match-type=delete] with styling, without an explicit deletion element in the inspected inline renderer. Need actual reading evidence before changing semantics or accepting a weaker assertion.",
+          "next": "Manual comparison-side and removed-text readout check; exact words and navigation recorded."
+        },
+        {
+          "ticket": "PYLD-3769",
+          "case": "Deletion dialog opening",
+          "finding": "Initial capture can contain menu speech; current blacklist does not establish announcement order. Do not align/reset cursor after opening to make arrival pass.",
+          "next": "Manual natural-opening announcement and initial cursor location."
+        },
+        {
+          "ticket": "PYLD-3682",
+          "case": "Copy-to drawer entry",
+          "finding": "Generic scroll-area capture does not prove named drawer arrival; background speech may be stale.",
+          "next": "Manual overflow-menu opening and initial cursor location, without forced focus."
+        },
+        {
+          "ticket": "PYLD-3745",
+          "case": "Disabled row actions",
+          "finding": "Existing native fixture covers Blocks only, accepts either Paste or Replace and merged cached speech; it does not prove both original row types or each disabled action. Disabled menu items are real aria-disabled buttons rather than native disabled controls.",
+          "next": "Browser nonactivation/names, then manual discoverability and disabled state for both Array and Blocks."
+        },
+        {
+          "ticket": "PYLD-3752",
+          "case": "Filter and bulk-edit option names",
+          "finding": "Native expectation derives from a previous two-ArrowDown pass, then reopens. Selection/focus state may differ; matching previous option text is not a verified current-option oracle. Existing browser option-name regression checks real controls but exact native speech remains distinct.",
+          "next": "Browser names then manual current-option speech across reported controls; do not infer original NVDA behavior from VoiceOver."
+        },
+        {
+          "ticket": "PYLD-3669",
+          "case": "Unsaved toast speech",
+          "finding": "Existing browser regression checks real warning live region and aria-live=off on accessible close button. Previous native capture reports menu context rather than warning speech; this does not establish native close-name leakage.",
+          "next": "Manual spontaneous warning speech after Copy-to on an unsaved document; do not focus the toast."
+        }
+      ],
+      "policy": "No more speculative reruns or generic capture tweaks. One guided manual session distinguishes product barriers from unreliable automation. Retire only with linked browser evidence and explicit manual/platform limits; do not mark original NVDA or unexercised contexts verified.",
+      "browserVerification": {
+        "status": "passed",
+        "cases": 6,
+        "duration": "25.1 seconds",
+        "browser": "Chromium",
+        "node": "24.22.1",
+        "log": "/tmp/guidepup-six-browser-preflight.log",
+        "limits": "Existing tests verify selected browser properties only, not exact speech, automatic virtual-cursor arrival or all original reported variants."
+      },
+      "criteriaAssessed": [
+        "1.3.1 Info and Relationships (A)",
+        "2.1.1 Keyboard (A)",
+        "2.1.2 No Keyboard Trap (A)",
+        "2.4.3 Focus Order (A)",
+        "4.1.2 Name, Role, Value (A)",
+        "4.1.3 Status Messages (AA)"
+      ]
     }
   },
   "stackMigration": {
